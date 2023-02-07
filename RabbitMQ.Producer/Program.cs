@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Json;
 using RabbitMQ.Client;
 
 var factory = new ConnectionFactory { HostName = "192.168.2.14" };
@@ -11,8 +12,9 @@ channel.QueueDeclare(queue: "hello",
                      autoDelete: false,
                      arguments: null);
 
-const string message = "Hello World!";
-var body = Encoding.UTF8.GetBytes(message);
+var message = new Message( Guid.NewGuid(), "Hello World!" );
+var json = JsonSerializer.Serialize(message);
+var body = Encoding.UTF8.GetBytes(json);
 
 channel.BasicPublish(exchange: string.Empty,
                      routingKey: "hello",

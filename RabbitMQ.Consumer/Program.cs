@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -18,8 +19,9 @@ var consumer = new EventingBasicConsumer(channel);
 consumer.Received += (model, ea) =>
 {
     var body = ea.Body.ToArray();
-    var message = Encoding.UTF8.GetString(body);
-    Console.WriteLine($" [x] Received {message}");
+    var json = Encoding.UTF8.GetString(body);
+    var message = JsonSerializer.Deserialize<Message>(json);
+    Console.WriteLine($" [x] Received {message.Id}: {message.Text}");
 };
 channel.BasicConsume(queue: "hello",
                      autoAck: true,

@@ -1,0 +1,1 @@
+public record Message(Guid Id, string Text);
